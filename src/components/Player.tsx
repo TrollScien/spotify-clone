@@ -39,8 +39,8 @@ const VolumeControl = () => {
     const volume = usePlayerStore(state => state.volume)
     const setVolume = usePlayerStore(state => state.setVolume)
     const previousVolumeRef = useRef(volume)
-
     const isVolumeSilenced = volume < 0.1
+
     const handleClickVolume = () => {
         if (isVolumeSilenced) {
             setVolume(previousVolumeRef.current)
@@ -54,7 +54,6 @@ const VolumeControl = () => {
         <div className="flex justify-center gap-x-2 text-white">
             <button className="opacity-70 hover:opacity-100 transition" onClick={handleClickVolume}>
                 {isVolumeSilenced ? <VolumeSilence /> : <Volume />}
-
             </button>
             <Slider
                 defaultValue={[100]}
@@ -80,6 +79,7 @@ const SongControl = ({ audio }) => {
             audio.current.removeEventListener('timeupdate', handleTimeUpdate)
         }
     }, [])
+
     const handleTimeUpdate = () => {
         setCurrentTime(audio.current.currentTime)
     }
@@ -123,7 +123,7 @@ export function Player() {
     }, [isPlaying])
 
     useEffect(() => {
-        const { song, playlist, songs } = currentMusic
+        const { song, playlist } = currentMusic
         if (song) {
             const src = `/music/${playlist?.id}/0${song.id}.mp3`
 
@@ -135,12 +135,14 @@ export function Player() {
     }, [currentMusic])
 
     useEffect(() => {
-        audioRef.current.voume = volume
+        audioRef.current.volume = volume
     }, [volume])
 
 
     const handleClick = () => {
-        setIsPlaying(!isPlaying)
+        if (currentMusic.song) {
+            setIsPlaying(!isPlaying)
+        }
     }
     return (
         <div className="flex flex-row justify-between w-full px-1 z-50">
